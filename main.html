@@ -28,6 +28,27 @@
       vertical-align: middle;
       background-color: #333;
       font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    td.clicked {
+      background-color: #2ecc71; /* green */
+      color: #fff;
+    }
+    td.win {
+      box-shadow: 0 0 20px 5px #00ff00;
+      animation: pulse 1s infinite alternate;
+    }
+    @keyframes pulse {
+      from { box-shadow: 0 0 10px 3px #00ff00; }
+      to { box-shadow: 0 0 20px 6px #00ff00; }
+    }
+    #message {
+      font-size: 24px;
+      color: #00ff00;
+      margin-top: 20px;
+      font-weight: bold;
+      display: none;
     }
     button {
       margin-top: 20px;
@@ -48,24 +69,15 @@
 
   <h1>🎃 Halloween Bingo 🎃</h1>
   <table id="bingo"></table>
+  <div id="message">🎉 BINGO! 🎉</div>
   <button onclick="generateBingo()">Neues Bingo</button>
 
   <script>
     const words = [
-      "der Kürbis",
-      "die Hexe",
-      "das Gespenst",
-      "der Vampir",
-      "der Werwolf",
-      "die Spinne",
-      "das Skelett",
-      "der Friedhof",
-      "die Kerze",
-      "das Kostüm",
-      "die Süßigkeiten",
-      "das Blut",
-      "gruselig",
-      "sich verkleiden"
+      "der Kürbis", "die Hexe", "das Gespenst", "der Vampir",
+      "der Werwolf", "die Spinne", "das Skelett", "der Friedhof",
+      "die Kerze", "das Kostüm", "die Süßigkeiten", "das Blut",
+      "gruselig", "sich verkleiden"
     ];
 
     function shuffle(array) {
@@ -74,7 +86,9 @@
 
     function generateBingo() {
       const table = document.getElementById("bingo");
+      const message = document.getElementById("message");
       table.innerHTML = "";
+      message.style.display = "none";
       const selection = shuffle([...words]).slice(0, 9);
       let index = 0;
       for (let r = 0; r < 3; r++) {
@@ -82,13 +96,43 @@
         for (let c = 0; c < 3; c++) {
           const cell = document.createElement("td");
           cell.textContent = selection[index++];
+          cell.addEventListener("click", () => {
+            cell.classList.toggle("clicked");
+            checkBingo();
+          });
           row.appendChild(cell);
         }
         table.appendChild(row);
       }
     }
 
-    generateBingo(); // initial generation
+    function checkBingo() {
+      const cells = Array.from(document.querySelectorAll("#bingo td"));
+      const matrix = [cells.slice(0,3), cells.slice(3,6), cells.slice(6,9)];
+      const winningLines = [
+        [ [0,0], [0,1], [0,2] ], // rows
+        [ [1,0], [1,1], [1,2] ],
+        [ [2,0], [2,1], [2,2] ],
+        [ [0,0], [1,0], [2,0] ], // columns
+        [ [0,1], [1,1], [2,1] ],
+        [ [0,2], [1,2], [2,2] ],
+        [ [0,0], [1,1], [2,2] ], // diagonals
+        [ [0,2], [1,1], [2,0] ]
+      ];
+
+      // remove previous win effects
+      cells.forEach(c => c.classList.remove("win"));
+
+      for (const line of winningLines) {
+        if (line.every(([r,c]) => matrix[r][c].classList.contains("clicked"))) {
+          line.forEach(([r,c]) => matrix[r][c].classList.add("win"));
+          document.getElementById("message").style.display = "block";
+          return;
+        }
+      }
+    }
+
+    generateBingo(); // initial
   </script>
 </body>
 </html>
