@@ -1,12 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Website</title>
-  </head>
-  <body>
-    <h1>Hello, world!</h1>
-    <p>This is a minimal HTML5 document.</p>
-  </body>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Halloween Bingo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #222;
+      color: #fff;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+    td {
+      border: 2px solid #ff6600;
+      padding: 20px;
+      width: 100px;
+      height: 100px;
+      text-align: center;
+      vertical-align: middle;
+      background-color: #333;
+      font-size: 18px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #ff6600;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #ff8533;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎃 Halloween Bingo 🎃</h1>
+  <table id="bingo"></table>
+  <button onclick="generateBingo()">Neues Bingo</button>
+
+  <script>
+    const words = [
+      "der Kürbis",
+      "die Hexe",
+      "das Gespenst",
+      "der Vampir",
+      "der Werwolf",
+      "die Spinne",
+      "das Skelett",
+      "der Friedhof",
+      "die Kerze",
+      "das Kostüm",
+      "die Süßigkeiten",
+      "das Blut",
+      "gruselig",
+      "sich verkleiden"
+    ];
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function generateBingo() {
+      const table = document.getElementById("bingo");
+      table.innerHTML = "";
+      const selection = shuffle([...words]).slice(0, 9);
+      let index = 0;
+      for (let r = 0; r < 3; r++) {
+        const row = document.createElement("tr");
+        for (let c = 0; c < 3; c++) {
+          const cell = document.createElement("td");
+          cell.textContent = selection[index++];
+          row.appendChild(cell);
+        }
+        table.appendChild(row);
+      }
+    }
+
+    generateBingo(); // initial generation
+  </script>
+</body>
 </html>
